@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Blueprint Creator</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="styles/blueStyle.css">
+        
+    </head>
+
+    <body onload="loadScreen()">
+        
+        <div class="chooser">
+            <div>
+                <p>paredes</p>
+                <img id="0" src="img/paredeVertical.png" class="chooseObj" onclick="change(this.id)"/>
+                <img id="1" src="img/paredeHorizontal.png" class="chooseObj" onclick="change(this.id)"/>
+            </div>
+            <div>
+                <p>quinas</p>
+                <img id="2" src="img/quinaNE.png" class="chooseObj" onclick="change(this.id)"/>
+                <img id="3" src="img/quinaSE.png" class="chooseObj" onclick="change(this.id)"/>
+                <img id="4" src="img/quinaSW.png" class="chooseObj" onclick="change(this.id)"/>
+                <img id="5" src="img/quinaNW.png" class="chooseObj" onclick="change(this.id)"/>
+            </div>
+            <div>
+                <p>portas</p>
+                <img id="6" src="img/portaVertical.png" class="chooseObj" onclick="change(this.id)"/>
+                <img id="7" src="img/portaHorizontal.png" class="chooseObj" onclick="change(this.id)"/>
+            </div>
+            <div>
+                <p>apagar</p>
+                <img id="8" src="img/blank.png" class="chooseObj" onclick="change(this.id)"/>
+            </div>
+        </div>
+        
+        <div class="side">
+            
+            <canvas id="myCanvas" width="600" height="600" ></canvas>
+        </div>
+        
+        <div class='side'>
+            <p class="explain">Aqui vai uma breve explicação sobre como construir sua planta e como usar o aplicativo android para medir e depois pegar o resultado neste site, so que o problema é que eu nao sei como quebrar o text pra ele ficar contido onde eu quero. tipo o que aconteceria se eu escrevesse um texto absurdamente grande e completamente disconexo só pra testar no que vai dar...</p>
+            <p class="explain">e se eu fizesse outro paragrafo</p>
+            <h4 class='explain'>ou até um header</h4>
+            <p class='explain'>seguido de uma explicação</p>
+            <form action="ServletMap" method="POST" name="MapForm" id='map_form'>
+                <div class='hide'>
+                    <input type="text" name="user_id" id='user_id'/>
+                    <input type="text" name="map_url" id='map_url'/>
+                    <input type="submit" value='Enviar Imagem' class="sender"/>
+                </div>
+            </form>
+            <button class='sender' onclick="sendImage()">send image</button>
+        </div>
+        <div class="hide">
+            <select id="seletor">
+                <option  value="img/paredeVertical.png"> parede vertical </option>
+                <option  value="img/paredeHorizontal.png"> parede horizontal </option>
+                <option  value="img/quinaNE.png"> quina NE </option>
+                <option  value="img/quinaSE.png"> quina SE </option>
+                <option  value="img/quinaSW.png"> quina SW </option>
+                <option  value="img/quinaNW.png"> quina NW </option>
+                <option  value="img/portaVertical.png"> porta vertical </option>
+                <option  value="img/portaHorizontal.png"> porta horizontal </option>
+                <option  value="img/blank.png"> blank </option>
+            </select>
+        </div>
+        
+        <script> 
+            function loadScreen(){
+                document.getElementById("myCanvas").getContext('2d').fillStyle = "#FFFFFF";
+                document.getElementById("myCanvas").getContext('2d').fillRect(0,0,600,600);
+                document.getElementById("0").style = "border:2px solid #FF0000";
+                var parameters = location.search;
+                document.getElementById("user_id").value = parameters.split("=")[1];
+            }
+            function change(ID){
+                document.getElementById(document.getElementById("seletor").selectedIndex).style = "border:1px solid #000000";
+                document.getElementById("seletor").selectedIndex = ID;
+                document.getElementById(document.getElementById("seletor").selectedIndex).style = "border:2px solid #FF0000";
+            }
+
+            function getImg(){
+        	var data = document.getElementById("myCanvas").toDataURL();
+        	var img = document.createElement("img");
+                img.src = data;
+        	return img;
+            }
+
+            function sendImage(){
+                createImage();
+                
+                var url = "ServletMap";
+                var params = "user_id="+document.getElementById("user_id").value+"&map_url="+document.getElementById("map_url").value;
+                //var image_uri = document.getElementById("map_url").value;
+                //var str = image_uri;
+                //var i=0;
+                
+                //while(!(str==""||str==null)){
+                //    params = params + "&map_url"+i+"="+ str.subString(0,100);
+                //    str = str.subString(100);
+                //    i+=1;
+                //}
+                
+                var xhttp = new XMLHttpRequest();
+                xhttp.open("POST", url, true);
+                
+                xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhttp.setRequestHeader("Content-length", params.length);
+                xhttp.setRequestHeader("Connection", "close");
+                
+                xhttp.onreadystatechange = function(){
+                    if(xhttp.readyState == 4 && xhttp.status == 200){
+                        alert(xhttp.responseText);
+                    }   
+                    if(xhttp.readyState == 4){
+                        alert(xhttp.responseText);
+                    }   
+
+                };
+                
+                xhttp.send(params);
+            }
+
+            function createImage(){
+                var image = getImg();
+                document.getElementById("map_url").value = image.src;
+                //document.getElementById("p1").innerHTML = image.src;
+                //alert("imagem pronta");
+            }
+            
+            function getMousePos( evt) {
+                var rect = document.getElementById("myCanvas").getBoundingClientRect();
+                return {
+                    x: evt.clientX - rect.left,
+                    y: evt.clientY - rect.top
+                };
+            }
+
+            document.getElementById("myCanvas").addEventListener("mousedown", function(event){
+                var contx = document.getElementById("myCanvas").getContext('2d');
+                var mousePos = getMousePos(event);
+                var posx = Math.floor(mousePos.x/30)*30;
+                var posy = Math.floor(mousePos.y/30)*30;
+                var imag = document.createElement("img");
+                imag.src = document.getElementById("seletor").options[document.getElementById("seletor").selectedIndex].value;
+                contx.clearRect(posx, posy, 30, 30);
+                contx.drawImage(imag, posx, posy);
+            });
+        </script>
+
+        
+</body>
+</html>

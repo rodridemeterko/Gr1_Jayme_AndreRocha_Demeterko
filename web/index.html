@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Bem Vindo! - Login</title>
+</head>
+<body>
+	<h1><b>Login</b></h1>
+	<form action="ServletLogin" method="post">
+		<fieldset>
+			<legend>Dados</legend>
+			<table cellspacing="10">
+			<tr>
+				<td>
+					<label>Usuário: </label>
+				</td>
+				<td align="left">
+					<input type="text" name="user" required="required" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label>Senha: </label>
+				</td>
+				<td align="left">
+					<input type="password" name="password" required="required" />
+				</td>
+			</tr>
+			</table>
+		</fieldset>
+		<br />
+		<input type="submit" />
+		<input type="reset" value="Limpar" />
+		</form>
+		<br />
+		<h3><a href="cadastro.html">Criar Conta</a></h3>
+</body>
+</html>
